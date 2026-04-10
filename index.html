@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICSEECR 2026 — Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green-dark: #0d4a2e;
+    --green-mid: #1a6e3f;
+    --green-light: #e8f4ee;
+    --green-accent: #2ecc71;
+    --cream: #f7f6f2;
+    --text: #1a1a1a;
+    --text-muted: #5a5a5a;
+    --border: #d8d4cc;
+    --red: #c0392b;
+    --white: #ffffff;
+    --shadow: 0 2px 16px rgba(13,74,46,0.07);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .header {
+    background: var(--green-dark);
+    color: white;
+    padding: 3.5rem 2.5rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(46,204,113,0.07);
+    pointer-events: none;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -50px; left: 28%;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+    pointer-events: none;
+  }
+  .header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .conf-tag {
+    display: inline-block;
+    background: rgba(46,204,113,0.18);
+    border: 1px solid rgba(46,204,113,0.35);
+    color: #a8e6c2;
+    font-size: 14px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(26px, 4.5vw, 42px);
+    line-height: 1.3;
+    font-weight: 400;
+    margin-bottom: 10px;
+    color: white;
+  }
+  .header-meta {
+    font-size: 16px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .header-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: rgba(255,255,255,0.88);
+    padding: 5px 13px;
+    border-radius: 20px;
+    font-size: 14px;
+  }
+  .badge .dot {
+    width: 6px; height: 6px;
+    background: var(--green-accent);
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .progress-bar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    overflow-x: auto;
+  }
+  .progress-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    min-width: 400px;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--text-muted);
+    flex: 1;
+  }
+  .step::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin-left: 6px;
+    margin-right: 2px;
+  }
+  .step:last-child::after { display: none; }
+  .step .snum {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--border);
+    color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .step.active .snum { background: var(--green-mid); color: white; }
+  .step.active { color: var(--green-dark); font-weight: 500; }
+  @media(max-width: 520px) { .step span.slabel { display: none; } }
+
+  .form-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  .intro-note {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    padding: 10px 14px;
+    background: white;
+    border-left: 3px solid var(--green-mid);
+    border-radius: 0 6px 6px 0;
+    line-height: 1.6;
+  }
+  .intro-note a { color: var(--green-mid); text-decoration: none; }
+  .intro-note a:hover { text-decoration: underline; }
+
+  .section-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 2.25rem 0 1rem;
+  }
+  .section-head .num {
+    width: 36px; height: 36px;
+    background: var(--green-mid);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .section-head h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--green-dark);
+    margin-bottom: 2px;
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem 2.25rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .field { margin-bottom: 1.4rem; }
+  .field:last-child { margin-bottom: 0; }
+  .field label {
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 5px;
+  }
+  .field label .req { color: var(--red); margin-left: 2px; }
+  .hint {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  input[type=text], input[type=email], input[type=tel], textarea, select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: white;
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--green-mid);
+    box-shadow: 0 0 0 3px rgba(26,110,63,0.1);
+  }
+  textarea { resize: vertical; min-height: 100px; }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a5a5a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media(max-width: 560px) { .row-2 { grid-template-columns: 1fr; } }
+
+  .radio-group, .check-group { display: flex; flex-direction: column; gap: 7px; }
+  .radio-group label, .check-group label {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 15px; font-weight: 400;
+    color: var(--text); cursor: pointer;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: background .15s, border-color .15s;
+    line-height: 1.4;
+  }
+  .radio-group label:hover, .check-group label:hover {
+    background: var(--green-light);
+    border-color: var(--green-mid);
+  }
+  .radio-group input[type=radio], .check-group input[type=checkbox] {
+    width: 16px; height: 16px;
+    accent-color: var(--green-mid);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    position: relative;
+    background: #fdfcfa;
+  }
+  .upload-area:hover { border-color: var(--green-mid); background: var(--green-light); }
+  .upload-area.has-file { border-color: var(--green-mid); background: var(--green-light); border-style: solid; }
+  .upload-area input {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    width: 100%; height: 100%;
+  }
+  .upload-icon { font-size: 38px; margin-bottom: 10px; display: block; }
+  .upload-area p { font-size: 15px; color: var(--text-muted); line-height: 1.5; }
+  .upload-area strong { color: var(--green-mid); }
+  #file-name {
+    font-size: 14px;
+    color: var(--green-mid);
+    margin-top: 6px;
+    font-weight: 500;
+    display: none;
+  }
+
+  .info-block {
+    background: var(--green-light);
+    border: 1px solid rgba(26,110,63,0.18);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--green-dark);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+  .info-block strong { font-weight: 500; }
+
+  .card-divider { border: none; border-top: 1px solid #f0ede8; margin: 1.1rem 0; }
+
+  .consent-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 15px 18px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .consent-item:last-child { margin-bottom: 0; }
+  .consent-item:hover { background: var(--green-light); border-color: var(--green-mid); }
+  .consent-item input[type=checkbox] {
+    margin-top: 2px;
+    accent-color: var(--green-mid);
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .consent-text { font-size: 15px; color: var(--text); line-height: 1.6; }
+  .consent-text strong { font-weight: 500; display: block; margin-bottom: 3px; font-size: 16px; }
+
+  .submit-wrap { margin-top: 2rem; text-align: center; }
+  .submit-btn {
+    display: inline-block;
+    padding: 16px 64px;
+    background: var(--green-mid);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .2s, transform .15s, box-shadow .2s;
+    box-shadow: 0 4px 16px rgba(26,110,63,0.25);
+    letter-spacing: .01em;
+  }
+  .submit-btn:hover { background: var(--green-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(13,74,46,0.3); }
+  .submit-btn:active { transform: scale(.98); }
+  .submit-note { font-size: 14px; color: var(--text-muted); margin-top: 10px; }
+
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 4rem 1.5rem;
+  }
+  .success-icon {
+    width: 68px; height: 68px;
+    background: var(--green-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.25rem;
+    font-size: 30px;
+    border: 2px solid rgba(26,110,63,0.2);
+  }
+  .success-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; font-weight: 400;
+    color: var(--green-dark);
+    margin-bottom: 10px;
+  }
+  .success-screen p { font-size: 16px; color: var(--text-muted); line-height: 1.8; }
+  .success-screen a { color: var(--green-mid); }
+
+  footer {
+    text-align: center;
+    padding: 1.75rem 1rem;
+    font-size: 14px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    margin-top: 1.5rem;
+    line-height: 1.8;
+  }
+  footer a { color: var(--green-mid); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="conf-tag">ICSEECR 2026</div>
+    <h1>International Conference on Sustainable Engineering,<br>Environmental Innovation &amp; Climate Resilience</h1>
+    <p class="header-meta">Gateway ICT Polytechnic, Saapade, Ogun State, Nigeria</p>
+    <div class="header-badges">
+      <span class="badge"><span class="dot"></span> International participants: Virtual participation – free registration</span>
+      <span class="badge">✉ <a href="mailto:icseecr@gaposa.edu.ng">icseecr@gaposa.edu.ng</a></span>
+    </div>
+  </div>
+</div>
+
+<div class="progress-bar">
+  <div class="progress-inner">
+    <div class="step active"><div class="snum">1</div><span class="slabel">Personal</span></div>
+    <div class="step active"><div class="snum">2</div><span class="slabel">Submission</span></div>
+    <div class="step active"><div class="snum">3</div><span class="slabel">Participation</span></div>
+    <div class="step active"><div class="snum">4</div><span class="slabel">Additional</span></div>
+    <div class="step active"><div class="snum">5</div><span class="slabel">Consent</span></div>
+  </div>
+</div>
+
+<div class="form-container">
+  <div id="main-form">
+
+    <p class="intro-note">
+      Welcome to the ICSEECR 2026 registration portal. Please complete all sections carefully.
+      Fields marked <strong style="color:var(--red)">*</strong> are required.
+      For enquiries, contact <a href="mailto:icseecr@gaposa.edu.ng">icseecr@gaposa.edu.ng</a> or <a href="mailto:csetgaposa@gmail.com">csetgaposa@gmail.com</a>.
+    </p>
+
+    <!-- SECTION 1: Personal Information -->
+    <div class="section-head">
+      <div class="num">1</div>
+      <div>
+        <h2>Personal Information</h2>
+        <div class="section-desc">Your contact and institutional details</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label>Full Name <span class="req">*</span></label>
+        <input type="text" id="fullname" placeholder="As it should appear on your conference badge and certificate" required>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="you@example.com" required>
+          <p class="hint">Conference communications will be sent to this address</p>
+        </div>
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel" id="phone" placeholder="+234 800 000 0000">
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>Affiliation / Institution <span class="req">*</span></label>
+          <input type="text" id="affiliation" placeholder="University, research institute, or company" required>
+        </div>
+        <div class="field">
+          <label>Department / Faculty</label>
+          <input type="text" id="department" placeholder="e.g. Civil Engineering, Environmental Science">
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>City &amp; Country <span class="req">*</span></label>
+          <input type="text" id="location" placeholder="e.g. Lagos, Nigeria" required>
+        </div>
+        <div class="field">
+          <label>Social Media Handles</label>
+          <input type="text" id="social" placeholder="@handle on X / LinkedIn URL">
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Paper Submission -->
+    <div class="section-head">
+      <div class="num">2</div>
+      <div>
+        <h2>Paper Submission</h2>
+        <div class="section-desc">Upload your research contribution and provide submission details</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="info-block">
+        <strong>Submission guidelines:</strong> Papers must be original, unpublished work.
+        Accepted formats: DOCX and PDF. Abstracts: 250–400 words. Full papers: 4,000–8,000 words.
+        Please follow the official ICSEECR 2026 template before uploading.
+      </div>
+
+      <div class="field">
+        <label>Paper Title</label>
+        <input type="text" id="papertitle" placeholder="Full title of your submitted paper">
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>Paper Submission Status <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="paperstatus" value="Not Submitting"> Not submitting a paper</label>
+            <label><input type="radio" name="paperstatus" value="Abstract Only"> Abstract only</label>
+            <label><input type="radio" name="paperstatus" value="Full Paper"> Full paper</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Thematic Track</label>
+          <select id="track">
+            <option value="">— Select a track —</option>
+            <option>Sustainable Engineering &amp; Infrastructure</option>
+            <option>Environmental Innovation &amp; Technology</option>
+            <option>Climate Resilience &amp; Adaptation</option>
+            <option>Renewable Energy Systems</option>
+            <option>Water Resources &amp; Waste Management</option>
+            <option>Smart Cities &amp; Urban Sustainability</option>
+            <option>Policy, Governance &amp; Green Economy</option>
+            <option>Other</option>
+          </select>
+          <p class="hint">Select the track that best fits your paper</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Abstract</label>
+        <textarea id="abstract" style="min-height:120px" placeholder="Paste your paper abstract here (250–400 words)..."></textarea>
+      </div>
+
+      <hr class="card-divider">
+
+      <div class="field">
+        <label>Upload Full Paper (DOCX or PDF) <span class="req">*</span></label>
+        <div class="upload-area" id="upload-area">
+          <input type="file" id="paperfile" accept=".docx,.pdf" onchange="handleFile(this)">
+          <span class="upload-icon">📄</span>
+          <p><strong>Click to upload</strong> or drag and drop your paper here</p>
+          <p>Accepted formats: DOCX, PDF &nbsp;·&nbsp; Max size: 10 MB</p>
+          <p id="file-name"></p>
+        </div>
+      </div>
+
+      <hr class="card-divider">
+
+      <div class="field">
+        <label>Award Consideration</label>
+        <p class="hint" style="margin-bottom:8px">Check all that apply. Eligible submissions will be reviewed by the awards committee.</p>
+        <div class="check-group">
+          <label><input type="checkbox" id="award-best"> I wish to be considered for the <strong style="font-weight:500">Best Paper Award</strong></label>
+          <label><input type="checkbox" id="award-student"> I wish to be considered for the <strong style="font-weight:500">Student Presentation Award</strong> (students only)</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Participation Details -->
+    <div class="section-head">
+      <div class="num">3</div>
+      <div>
+        <h2>Participation Details</h2>
+        <div class="section-desc">How you will attend and present at the conference</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row-2">
+        <div class="field">
+          <label>Participant Category <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="ptype" value="Student"> Student (undergraduate / postgraduate)</label>
+            <label><input type="radio" name="ptype" value="Academic"> Academic / Lecturer</label>
+            <label><input type="radio" name="ptype" value="Researcher"> Researcher</label>
+            <label><input type="radio" name="ptype" value="Industry Professional"> Industry Professional</label>
+            <label><input type="radio" name="ptype" value="Other"> Other</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Attendance Mode <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="amode" value="In-Person"> In-Person (Saapade, Ogun State)</label>
+            <label><input type="radio" name="amode" value="Virtual"> Virtual (free for international participants)</label>
+          </div>
+        </div>
+      </div>
+      <hr class="card-divider">
+      <div class="field">
+        <label>Presentation Format</label>
+        <div class="radio-group" style="flex-direction:row;flex-wrap:wrap;gap:7px">
+          <label style="flex:1;min-width:160px"><input type="radio" name="prestype" value="Oral"> Oral presentation</label>
+          <label style="flex:1;min-width:160px"><input type="radio" name="prestype" value="Poster"> Poster presentation</label>
+          <label style="flex:1;min-width:160px"><input type="radio" name="prestype" value="No Preference"> No preference</label>
+          <label style="flex:1;min-width:160px"><input type="radio" name="prestype" value="Attendee Only"> Attendee only (no presentation)</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Additional Information -->
+    <div class="section-head">
+      <div class="num">4</div>
+      <div>
+        <h2>Additional Information</h2>
+        <div class="section-desc">Help us accommodate you better</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row-2">
+        <div class="field">
+          <label>Dietary Restrictions</label>
+          <input type="text" id="dietary" placeholder="e.g. vegetarian, halal, vegan, none">
+        </div>
+        <div class="field">
+          <label>T-Shirt Size <span style="font-weight:300;color:var(--text-muted)">(in-person participants)</span></label>
+          <select id="tshirt">
+            <option value="">— Select size —</option>
+            <option>XS</option><option>S</option><option>M</option>
+            <option>L</option><option>XL</option><option>XXL</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Special Needs / Accessibility Requirements</label>
+        <textarea id="accessibility" placeholder="Let us know if you require any accommodations (wheelchair access, sign language interpretation, etc.)"></textarea>
+      </div>
+      <div class="field">
+        <label>How did you hear about ICSEECR 2026?</label>
+        <select id="referral">
+          <option value="">— Select —</option>
+          <option>Institutional announcement</option>
+          <option>Email / newsletter</option>
+          <option>Social media</option>
+          <option>Colleague / peer referral</option>
+          <option>Conference website</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- SECTION 5: Consent -->
+    <div class="section-head">
+      <div class="num">5</div>
+      <div>
+        <h2>Consent &amp; Agreement</h2>
+        <div class="section-desc">Please read and confirm before submitting</div>
+      </div>
+    </div>
+    <div class="card">
+      <label class="consent-item">
+        <input type="checkbox" id="privacy" required>
+        <div class="consent-text">
+          <strong>Data Privacy Agreement <span class="req">*</span></strong>
+          I consent to the collection and use of my personal data by Gateway ICT Polytechnic for conference registration, communication, and administration. My data will not be shared with third parties without my consent.
+        </div>
+      </label>
+      <label class="consent-item">
+        <input type="checkbox" id="originality">
+        <div class="consent-text">
+          <strong>Originality Declaration</strong>
+          I confirm that the submitted paper is my original work, has not been previously published, and is not currently under review elsewhere.
+        </div>
+      </label>
+      <label class="consent-item">
+        <input type="checkbox" id="newsletter">
+        <div class="consent-text">
+          <strong>Newsletter Subscription</strong>
+          I would like to receive updates about future ICSEECR events, calls for papers, and related academic opportunities.
+        </div>
+      </label>
+    </div>
+
+    <div class="submit-wrap">
+      <button class="submit-btn" onclick="submitForm()">Submit Registration →</button>
+      <p class="submit-note">By submitting, you confirm that all information provided is accurate and complete.</p>
+    </div>
+
+  </div>
+
+  <!-- Success screen -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✓</div>
+    <h2>Registration Submitted!</h2>
+    <p>
+      Thank you for registering for ICSEECR 2026.<br>
+      A confirmation will be sent to your email address shortly.<br><br>
+      For enquiries, please contact<br>
+      <a href="mailto:icseecr@gaposa.edu.ng">icseecr@gaposa.edu.ng</a> &nbsp;|&nbsp; <a href="mailto:csetgaposa@gmail.com">csetgaposa@gmail.com</a>
+    </p>
+  </div>
+</div>
+
+<footer>
+  <strong>ICSEECR 2026</strong> — International Conference on Sustainable Engineering, Environmental Innovation &amp; Climate Resilience<br>
+  Organised by Gateway ICT Polytechnic &nbsp;·&nbsp; <em>Advancing Sustainable Development Goals</em><br>
+  Gateway ICT Polytechnic, Saapade, Ogun State, Nigeria &nbsp;|&nbsp;
+  <a href="mailto:icseecr@gaposa.edu.ng">icseecr@gaposa.edu.ng</a> &nbsp;|&nbsp; <a href="mailto:csetgaposa@gmail.com">csetgaposa@gmail.com</a>
+</footer>
+
+<script>
+  // ============================================================
+  // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW
+  // ============================================================
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-Q-yIRxxYvnNO5z6j4t0-e1hWHeHXTYggpoM-TmpHZCImKjxHDbArLtLCbpphKlNI/exec';
+  // ============================================================
+
+  function handleFile(input) {
+    const name = document.getElementById('file-name');
+    const area = document.getElementById('upload-area');
+    if (input.files[0]) {
+      name.textContent = '✓  ' + input.files[0].name;
+      name.style.display = 'block';
+      area.classList.add('has-file');
+    }
+  }
+
+  async function submitForm() {
+    // --- Validation ---
+    const textFields = [
+      { id: 'fullname',    label: 'Full Name' },
+      { id: 'email',       label: 'Email Address' },
+      { id: 'location',    label: 'City & Country' },
+      { id: 'affiliation', label: 'Affiliation / Institution' },
+    ];
+    for (const f of textFields) {
+      const el = document.getElementById(f.id);
+      if (!el.value.trim()) {
+        alert(f.label + ' is required.');
+        el.focus();
+        return;
+      }
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value)) {
+      alert('Please enter a valid email address.');
+      document.getElementById('email').focus();
+      return;
+    }
+    if (!document.querySelector('input[name="paperstatus"]:checked')) {
+      alert('Please select your Paper Submission Status.');
+      return;
+    }
+    if (!document.getElementById('paperfile').files.length) {
+      alert('Please upload your full paper (DOCX or PDF).');
+      return;
+    }
+    if (!document.getElementById('privacy').checked) {
+      alert('You must agree to the Data Privacy Agreement to proceed.');
+      return;
+    }
+
+    // --- Disable button, show loading ---
+    const btn = document.querySelector('.submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting… please wait';
+
+    try {
+      // --- Read file as base64 ---
+      const fileInput = document.getElementById('paperfile');
+      const file = fileInput.files[0];
+      const fileData = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      // --- Build payload ---
+      const params = new URLSearchParams();
+      params.append('fullname',     document.getElementById('fullname').value.trim());
+      params.append('email',        document.getElementById('email').value.trim());
+      params.append('phone',        document.getElementById('phone').value.trim());
+      params.append('affiliation',  document.getElementById('affiliation').value.trim());
+      params.append('department',   document.getElementById('department').value.trim());
+      params.append('location',     document.getElementById('location').value.trim());
+      params.append('social',       document.getElementById('social').value.trim());
+      params.append('papertitle',   document.getElementById('papertitle').value.trim());
+      params.append('paperstatus',  (document.querySelector('input[name="paperstatus"]:checked') || {}).value || '');
+      params.append('track',        document.getElementById('track').value);
+      params.append('abstract',     document.getElementById('abstract').value.trim());
+      params.append('awardBest',    document.getElementById('award-best').checked ? 'Yes' : 'No');
+      params.append('awardStudent', document.getElementById('award-student').checked ? 'Yes' : 'No');
+      params.append('ptype',        (document.querySelector('input[name="ptype"]:checked') || {}).value || '');
+      params.append('amode',        (document.querySelector('input[name="amode"]:checked') || {}).value || '');
+      params.append('prestype',     (document.querySelector('input[name="prestype"]:checked') || {}).value || '');
+      params.append('dietary',      document.getElementById('dietary').value.trim());
+      params.append('tshirt',       document.getElementById('tshirt').value);
+      params.append('accessibility',document.getElementById('accessibility').value.trim());
+      params.append('referral',     document.getElementById('referral').value);
+      params.append('privacy',      document.getElementById('privacy').checked ? 'Yes' : 'No');
+      params.append('originality',  document.getElementById('originality').checked ? 'Yes' : 'No');
+      params.append('newsletter',   document.getElementById('newsletter').checked ? 'Yes' : 'No');
+      // File
+      params.append('fileData',     fileData);
+      params.append('fileName',     file.name);
+      params.append('fileMime',     file.type || 'application/octet-stream');
+
+      // --- Send to Apps Script ---
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: params
+      });
+
+      const result = await response.json();
+
+      if (result.result === 'success') {
+        document.getElementById('main-form').style.display = 'none';
+        document.getElementById('success-screen').style.display = 'flex';
+        document.getElementById('success-screen').style.flexDirection = 'column';
+        document.getElementById('success-screen').style.alignItems = 'center';
+        window.scrollTo(0, 0);
+      } else {
+        alert('Submission failed: ' + (result.message || 'Unknown error. Please try again.'));
+        btn.disabled = false;
+        btn.textContent = 'Submit Registration →';
+      }
+    } catch (err) {
+      alert('A network error occurred. Please check your connection and try again.');
+      btn.disabled = false;
+      btn.textContent = 'Submit Registration →';
+    }
+  }
+</script>
+</body>
+</html>
