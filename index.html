@@ -835,16 +835,45 @@
 
   var FULL_PAPER_PHASE = false;  // updated by checkPhase()
 
-  async function checkPhase() {
-    try {
-      const res  = await fetch(APPS_SCRIPT_URL, { method: 'GET' });
-      const data = await res.json();
-      FULL_PAPER_PHASE = (data.phase === 'OPEN');
-    } catch (err) {
-      console.warn('Phase check failed, defaulting to CLOSED:', err);
+  // ── checkPhase uses JSONP-style script tag injection ──────────
+  // A plain fetch() GET to Apps Script fails due to redirect/CORS
+  // on GitHub Pages. Script tag injection bypasses this entirely —
+  // the Apps Script doGet() wraps the response in a callback
+  // function that sets FULL_PAPER_PHASE and calls renderPhase().
+  // A 30-second poll keeps the page in sync if B2 changes while
+  // an author has the page open.
+  // ─────────────────────────────────────────────────────────────
+
+  var _phaseCheckTimer = null;
+
+  function checkPhase() {
+    // Remove any old injected script tag
+    var old = document.getElementById('_phase_script');
+    if (old) old.parentNode.removeChild(old);
+
+    // Inject a new script tag — Apps Script doGet() returns
+    // _phaseCallback({phase:"OPEN"}) or _phaseCallback({phase:"CLOSED"})
+    var s = document.createElement('script');
+    s.id  = '_phase_script';
+    s.src = APPS_SCRIPT_URL + '?callback=_phaseCallback&_t=' + Date.now();
+    s.onerror = function() {
+      console.warn('Phase check script load failed — defaulting to CLOSED');
       FULL_PAPER_PHASE = false;
-    }
+      renderPhase();
+    };
+    document.head.appendChild(s);
+  }
+
+  // Called by the injected script when Apps Script responds
+  function _phaseCallback(data) {
+    FULL_PAPER_PHASE = (data && data.phase === 'OPEN');
     renderPhase();
+  }
+
+  // Poll every 30 seconds so B2 changes take effect without refresh
+  function startPhasePolling() {
+    checkPhase();
+    _phaseCheckTimer = setInterval(checkPhase, 30000);
   }
 
   function renderPhase() {
@@ -936,8 +965,8 @@
     }
   }
 
-  // Run phase check immediately when page loads
-  checkPhase();
+  // Run phase check immediately and poll every 30 seconds
+  startPhasePolling();
 
   // ============================================================
 
