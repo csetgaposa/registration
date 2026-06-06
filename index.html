@@ -491,9 +491,8 @@
     </div>
     <div class="card">
       <div class="info-block">
-        <strong>Submission guidelines:</strong> Papers must be original, unpublished work.
-        Accepted formats: DOCX and PDF. Abstracts: 250–400 words. Full papers: 4,000–8,000 words.
-        Please follow the official ICSEECR 2026 template before uploading.
+        <strong>📋 Abstract Submission Phase — Full Paper Upload Not Yet Open</strong><br>
+        At this stage, we are collecting <strong>abstracts only</strong> for peer review. Full paper uploads will be enabled after conference presentations. When that phase opens, authors will be notified and must comply with the official <strong>ICSEECR 2026 paper template</strong> (formatting, length, and citation guidelines) before uploading. Abstracts: 300–500 words. Papers must be original, unpublished work not currently under review elsewhere.
       </div>
 
       <div class="field">
@@ -507,8 +506,8 @@
           <div class="radio-group">
             <label><input type="radio" name="paperstatus" value="Not Submitting"> Not submitting a paper</label>
             <label><input type="radio" name="paperstatus" value="Abstract Only"> Abstract only</label>
-            <label><input type="radio" name="paperstatus" value="Full Paper"> Full paper</label>
           </div>
+          <p class="hint" style="margin-top:6px">Full paper submission will be enabled after conference presentations.</p>
         </div>
         <div class="field">
           <label>Thematic Track</label>
@@ -528,20 +527,37 @@
       </div>
 
       <div class="field">
-        <label>Abstract</label>
-        <textarea id="abstract" style="min-height:120px" placeholder="Paste your paper abstract here (250–400 words)..."></textarea>
+        <label>Abstract <span class="req">*</span></label>
+        <textarea id="abstract" style="min-height:120px" placeholder="Paste your paper abstract here (300–500 words)..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Keywords <span class="req">*</span></label>
+        <input type="text" id="keywords" placeholder="e.g. solar energy, smart grid, IoT, climate resilience, Nigeria">
+        <p class="hint">Provide 4–6 keywords separated by commas. Keywords are used for track assignment, proceedings indexing, and reviewer matching.</p>
       </div>
 
       <hr class="card-divider">
 
       <div class="field">
-        <label>Upload Full Paper (DOCX or PDF) <span class="req">*</span></label>
-        <div class="upload-area" id="upload-area">
-          <input type="file" id="paperfile" accept=".docx,.pdf" onchange="handleFile(this)">
-          <span class="upload-icon">📄</span>
-          <p><strong>Click to upload</strong> or drag and drop your paper here</p>
-          <p>Accepted formats: DOCX, PDF &nbsp;·&nbsp; Max size: 10 MB</p>
-          <p id="file-name"></p>
+        <label>Upload Full Paper</label>
+        <div style="
+          border: 2px dashed var(--border);
+          border-radius: 10px;
+          padding: 1.6rem 1.2rem;
+          text-align: center;
+          background: #fafaf8;
+          opacity: 0.75;
+          pointer-events: none;
+          user-select: none;
+        ">
+          <span style="font-size:36px;display:block;margin-bottom:10px;filter:grayscale(1)">🔒</span>
+          <p style="font-size:15px;font-weight:500;color:var(--text-muted);margin-bottom:6px">Full Paper Upload — Not Yet Available</p>
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.6;">
+            This section will be enabled after conference presentations.<br>
+            Authors will be notified when full paper submissions open.<br>
+            <strong style="color:var(--green-dark);">Note:</strong> Uploaded papers must strictly comply with the official <strong>ICSEECR 2026 paper template</strong> (structure, formatting, citation style, and word count of 4,000–8,000 words).
+          </p>
         </div>
       </div>
 
@@ -704,16 +720,6 @@
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-Q-yIRxxYvnNO5z6j4t0-e1hWHeHXTYggpoM-TmpHZCImKjxHDbArLtLCbpphKlNI/exec';
   // ============================================================
 
-  function handleFile(input) {
-    const name = document.getElementById('file-name');
-    const area = document.getElementById('upload-area');
-    if (input.files[0]) {
-      name.textContent = '✓  ' + input.files[0].name;
-      name.style.display = 'block';
-      area.classList.add('has-file');
-    }
-  }
-
   async function submitForm() {
     // --- Validation ---
     const textFields = [
@@ -739,8 +745,21 @@
       alert('Please select your Paper Submission Status.');
       return;
     }
-    if (!document.getElementById('paperfile').files.length) {
-      alert('Please upload your full paper (DOCX or PDF).');
+    const kwVal = document.getElementById('keywords').value.trim();
+    if (!kwVal) {
+      alert('Please enter at least 4 keywords for your paper.');
+      document.getElementById('keywords').focus();
+      return;
+    }
+    const kwCount = kwVal.split(',').map(k => k.trim()).filter(k => k.length > 0).length;
+    if (kwCount < 4) {
+      alert('Please provide at least 4 keywords (separated by commas). You entered ' + kwCount + '.');
+      document.getElementById('keywords').focus();
+      return;
+    }
+    if (kwCount > 6) {
+      alert('Please provide no more than 6 keywords. You entered ' + kwCount + '.');
+      document.getElementById('keywords').focus();
       return;
     }
     if (!document.getElementById('privacy').checked) {
@@ -754,16 +773,6 @@
     btn.textContent = 'Submitting… please wait';
 
     try {
-      // --- Read file as base64 ---
-      const fileInput = document.getElementById('paperfile');
-      const file = fileInput.files[0];
-      const fileData = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-
       // --- Build payload ---
       const params = new URLSearchParams();
       params.append('fullname',     document.getElementById('fullname').value.trim());
@@ -777,6 +786,7 @@
       params.append('paperstatus',  (document.querySelector('input[name="paperstatus"]:checked') || {}).value || '');
       params.append('track',        document.getElementById('track').value);
       params.append('abstract',     document.getElementById('abstract').value.trim());
+      params.append('keywords',     document.getElementById('keywords').value.trim());
       params.append('awardBest',    document.getElementById('award-best').checked ? 'Yes' : 'No');
       params.append('awardStudent', document.getElementById('award-student').checked ? 'Yes' : 'No');
       params.append('ptype',        (document.querySelector('input[name="ptype"]:checked') || {}).value || '');
@@ -789,10 +799,6 @@
       params.append('privacy',      document.getElementById('privacy').checked ? 'Yes' : 'No');
       params.append('originality',  document.getElementById('originality').checked ? 'Yes' : 'No');
       params.append('newsletter',   document.getElementById('newsletter').checked ? 'Yes' : 'No');
-      // File
-      params.append('fileData',     fileData);
-      params.append('fileName',     file.name);
-      params.append('fileMime',     file.type || 'application/octet-stream');
 
       // --- Send to Apps Script ---
       const response = await fetch(APPS_SCRIPT_URL, {
