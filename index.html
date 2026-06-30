@@ -462,6 +462,39 @@
     line-height: 1.8;
   }
   footer a { color: var(--green-mid); text-decoration: none; }
+
+  /* Phase-checking & locked-state styles */
+  .phase-checking {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-muted);
+    font-size: 15px;
+  }
+  .phase-checking .spinner {
+    display: inline-block;
+    width: 22px; height: 22px;
+    border: 3px solid var(--border);
+    border-top-color: var(--green-mid);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .phase-locked-notice {
+    display: none;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 10px;
+    padding: 1.5rem 1.75rem;
+    text-align: center;
+    color: #6d4c00;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .phase-locked-notice .lock-icon { font-size: 28px; display: block; margin-bottom: 8px; }
+  .phase-locked-notice strong { font-size: 16px; display: block; margin-bottom: 4px; }
 </style>
 </head>
 <body>
@@ -611,14 +644,31 @@
 
       <hr class="card-divider">
 
-      <div class="field">
-        <label>Upload Full Paper (DOCX or PDF) <span class="req">*</span></label>
-        <div class="upload-area" id="upload-area">
-          <input type="file" id="paperfile" accept=".docx,.pdf" onchange="handleFile(this)">
-          <span class="upload-icon">📄</span>
-          <p><strong>Click to upload</strong> or drag and drop your paper here</p>
-          <p>Accepted formats: DOCX, PDF &nbsp;·&nbsp; Max size: 10 MB</p>
-          <p id="file-name"></p>
+      <div class="field" id="upload-field">
+        <!-- Phase-checking spinner (shown while fetching phase) -->
+        <div class="phase-checking" id="phase-checking">
+          <span class="spinner"></span> Checking submission phase…
+        </div>
+
+        <!-- Locked-phase notice (shown when CLOSED) -->
+        <div class="phase-locked-notice" id="phase-locked-notice">
+          <span class="lock-icon">🔒</span>
+          <strong>Full paper upload not yet open</strong>
+          The conference is currently in the <em>abstract-only</em> phase. You may still
+          complete and submit your registration — your abstract and details will be recorded.
+          You will receive an email when full paper upload opens.
+        </div>
+
+        <!-- Actual upload widget (shown when OPEN) -->
+        <div id="upload-open-section" style="display:none">
+          <label>Upload Full Paper (DOCX or PDF) <span class="req">*</span></label>
+          <div class="upload-area" id="upload-area">
+            <input type="file" id="paperfile" accept=".docx,.pdf" onchange="handleFile(this)">
+            <span class="upload-icon">📄</span>
+            <p><strong>Click to upload</strong> or drag and drop your paper here</p>
+            <p>Accepted formats: DOCX, PDF &nbsp;·&nbsp; Max size: 10 MB</p>
+            <p id="file-name"></p>
+          </div>
         </div>
       </div>
 
@@ -781,6 +831,44 @@
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-Q-yIRxxYvnNO5z6j4t0-e1hWHeHXTYggpoM-TmpHZCImKjxHDbArLtLCbpphKlNI/exec';
   // ============================================================
 
+  // ============================================================
+  // PHASE CHECK — runs on page load via JSONP to avoid CORS
+  // ============================================================
+  let currentPhase = 'CHECKING'; // 'OPEN' | 'CLOSED' | 'CHECKING'
+
+  function applyPhase(phase) {
+    currentPhase = phase;
+    const checking = document.getElementById('phase-checking');
+    const locked   = document.getElementById('phase-locked-notice');
+    const open     = document.getElementById('upload-open-section');
+
+    checking.style.display = 'none';
+    if (phase === 'OPEN') {
+      open.style.display   = 'block';
+      locked.style.display = 'none';
+    } else {
+      open.style.display   = 'none';
+      locked.style.display = 'block';
+    }
+  }
+
+  // JSONP callback — Apps Script calls this when ?callback=icseecr2026Phase is in the URL
+  function icseecr2026Phase(data) {
+    applyPhase((data && data.phase === 'OPEN') ? 'OPEN' : 'CLOSED');
+  }
+
+  (function checkPhaseOnLoad() {
+    // Inject a <script> tag for JSONP — avoids CORS entirely
+    const s = document.createElement('script');
+    s.src = APPS_SCRIPT_URL + '?callback=icseecr2026Phase&t=' + Date.now();
+    s.onerror = function() { applyPhase('CLOSED'); }; // fail-safe: lock on error
+    document.head.appendChild(s);
+    // Fallback timeout in case script never fires (e.g. network timeout)
+    setTimeout(function() {
+      if (currentPhase === 'CHECKING') applyPhase('CLOSED');
+    }, 8000);
+  })();
+
   function handleFile(input) {
     const name = document.getElementById('file-name');
     const area = document.getElementById('upload-area');
@@ -864,7 +952,7 @@
       alert('Please select your Paper Submission Status.');
       return;
     }
-    if (!document.getElementById('paperfile').files.length) {
+    if (currentPhase === 'OPEN' && !document.getElementById('paperfile').files.length) {
       alert('Please upload your full paper (DOCX or PDF).');
       return;
     }
@@ -879,15 +967,20 @@
     btn.textContent = 'Submitting… please wait';
 
     try {
-      // --- Read file as base64 ---
+      // --- Read file as base64 (only when upload phase is OPEN and file selected) ---
       const fileInput = document.getElementById('paperfile');
-      const file = fileInput.files[0];
-      const fileData = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      const file = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
+      let fileData = '', fileName = '', fileMime = '';
+      if (file) {
+        fileData = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        fileName = file.name;
+        fileMime = file.type || 'application/octet-stream';
+      }
 
       // --- Build payload ---
       const params = new URLSearchParams();
@@ -916,10 +1009,10 @@
       params.append('privacy',      document.getElementById('privacy').checked ? 'Yes' : 'No');
       params.append('originality',  document.getElementById('originality').checked ? 'Yes' : 'No');
       params.append('newsletter',   document.getElementById('newsletter').checked ? 'Yes' : 'No');
-      // File
+      // File (empty strings sent when abstract-only phase)
       params.append('fileData',     fileData);
-      params.append('fileName',     file.name);
-      params.append('fileMime',     file.type || 'application/octet-stream');
+      params.append('fileName',     fileName);
+      params.append('fileMime',     fileMime);
 
       // --- Send to Apps Script ---
       const response = await fetch(APPS_SCRIPT_URL, {
