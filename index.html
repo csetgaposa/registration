@@ -326,6 +326,68 @@
 
   .card-divider { border: none; border-top: 1px solid #f0ede8; margin: 1.1rem 0; }
 
+  /* Co-Authors section */
+  .coauthor-block {
+    background: var(--green-light);
+    border: 1px solid rgba(26,110,63,0.18);
+    border-radius: 10px;
+    padding: 1.25rem 1.4rem;
+    margin-top: 0.4rem;
+  }
+  .coauthor-block .hint { margin-top: 0; margin-bottom: 14px; }
+  .coauthor-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: start;
+  }
+  .coauthor-row input {
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+  .coauthor-row input::placeholder { color: #9a968c; }
+  .remove-coauthor-btn {
+    background: white;
+    color: var(--red);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    flex-shrink: 0;
+  }
+  .remove-coauthor-btn:hover { background: #fdf0ee; border-color: var(--red); }
+  .add-coauthor-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    color: var(--green-mid);
+    border: 1px solid var(--green-mid);
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 2px;
+    transition: background .15s, color .15s;
+  }
+  .add-coauthor-btn:hover { background: var(--green-mid); color: white; }
+  .no-coauthors-msg {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+  @media(max-width: 620px) {
+    .coauthor-row { grid-template-columns: 1fr; }
+    .remove-coauthor-btn { width: 100%; height: 38px; }
+  }
+
   .consent-item {
     display: flex; align-items: flex-start; gap: 12px;
     padding: 15px 18px;
@@ -400,99 +462,6 @@
     line-height: 1.8;
   }
   footer a { color: var(--green-mid); text-decoration: none; }
-
-  /* ── Submission Progress Overlay ─────────────────────────── */
-  #progress-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(10, 30, 15, 0.82);
-    backdrop-filter: blur(4px);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-  }
-  #progress-overlay.active { display: flex; }
-
-  .progress-box {
-    background: #fff;
-    border-radius: 18px;
-    padding: 2.4rem 2.8rem;
-    width: min(460px, 90vw);
-    box-shadow: 0 24px 64px rgba(0,0,0,0.35);
-    text-align: center;
-  }
-  .progress-box .prog-icon {
-    font-size: 2.8rem;
-    margin-bottom: 0.6rem;
-    animation: prog-pulse 1.4s ease-in-out infinite;
-  }
-  @keyframes prog-pulse {
-    0%, 100% { transform: scale(1);   opacity: 1; }
-    50%       { transform: scale(1.1); opacity: 0.75; }
-  }
-  .progress-box h3 {
-    font-size: 1.2rem;
-    color: var(--green-dark);
-    margin: 0 0 0.3rem;
-  }
-  .progress-box .prog-stage {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    margin-bottom: 1.2rem;
-    min-height: 1.2em;
-    transition: opacity 0.3s;
-  }
-  .prog-bar-track {
-    background: #e8f5e9;
-    border-radius: 99px;
-    height: 10px;
-    overflow: hidden;
-    margin-bottom: 0.9rem;
-  }
-  .prog-bar-fill {
-    height: 100%;
-    border-radius: 99px;
-    background: linear-gradient(90deg, #2e7d32, #66bb6a);
-    width: 0%;
-    transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .prog-percent {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    font-variant-numeric: tabular-nums;
-  }
-  .prog-steps {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1.2rem;
-    gap: 0.3rem;
-  }
-  .prog-step {
-    flex: 1;
-    font-size: 0.72rem;
-    color: #bbb;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    transition: color 0.3s;
-  }
-  .prog-step.done  { color: #2e7d32; }
-  .prog-step.active { color: #1a237e; font-weight: 600; }
-  .prog-step-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #ddd;
-    transition: background 0.3s;
-  }
-  .prog-step.done  .prog-step-dot { background: #2e7d32; }
-  .prog-step.active .prog-step-dot { background: #1a237e; animation: prog-pulse 1s infinite; }
-  .prog-note {
-    font-size: 0.78rem;
-    color: #aaa;
-    margin-top: 1rem;
-  }
 </style>
 </head>
 <body>
@@ -583,8 +552,10 @@
       </div>
     </div>
     <div class="card">
-      <div id="phase-info-block" class="info-block">
-        <strong>⏳ Checking submission phase...</strong>
+      <div class="info-block">
+        <strong>Submission guidelines:</strong> Papers must be original, unpublished work.
+        Accepted formats: DOCX and PDF. Abstracts: 250–400 words. Full papers: 4,000–8,000 words.
+        Please follow the official ICSEECR 2026 template before uploading.
       </div>
 
       <div class="field">
@@ -595,11 +566,11 @@
       <div class="row-2">
         <div class="field">
           <label>Paper Submission Status <span class="req">*</span></label>
-          <div id="paperstatus-group" class="radio-group">
+          <div class="radio-group">
             <label><input type="radio" name="paperstatus" value="Not Submitting"> Not submitting a paper</label>
             <label><input type="radio" name="paperstatus" value="Abstract Only"> Abstract only</label>
+            <label><input type="radio" name="paperstatus" value="Full Paper"> Full paper</label>
           </div>
-          <p id="paperstatus-hint" class="hint" style="margin-top:6px">Full paper submission will be enabled after conference presentations.</p>
         </div>
         <div class="field">
           <label>Thematic Track</label>
@@ -619,20 +590,36 @@
       </div>
 
       <div class="field">
-        <label>Abstract <span class="req">*</span></label>
-        <textarea id="abstract" style="min-height:120px" placeholder="Paste your paper abstract here (300–500 words)..."></textarea>
+        <label>Abstract</label>
+        <textarea id="abstract" style="min-height:120px" placeholder="Paste your paper abstract here (250–400 words)..."></textarea>
       </div>
 
       <div class="field">
-        <label>Keywords <span class="req">*</span></label>
-        <input type="text" id="keywords" placeholder="e.g. solar energy, smart grid, IoT, climate resilience, Nigeria">
-        <p class="hint">Provide 4–6 keywords separated by commas. Keywords are used for track assignment, proceedings indexing, and reviewer matching.</p>
+        <label>Co-Authors <span style="font-weight:300;color:var(--text-muted)">(optional — add all additional authors on this paper)</span></label>
+        <p class="hint">
+          You are automatically recorded as the corresponding author. List any
+          additional co-authors below exactly as they should appear in the
+          Book of Abstracts.
+        </p>
+        <div class="coauthor-block">
+          <p class="no-coauthors-msg" id="no-coauthors-msg">No co-authors added yet.</p>
+          <div id="coAuthorList"></div>
+          <button type="button" class="add-coauthor-btn" id="addCoAuthorBtn">+ Add Co-Author</button>
+        </div>
+        <input type="hidden" id="coauthorsJson" value="[]">
       </div>
 
       <hr class="card-divider">
 
-      <div id="upload-section">
-        <!-- Dynamically rendered by checkPhase() on page load -->
+      <div class="field">
+        <label>Upload Full Paper (DOCX or PDF) <span class="req">*</span></label>
+        <div class="upload-area" id="upload-area">
+          <input type="file" id="paperfile" accept=".docx,.pdf" onchange="handleFile(this)">
+          <span class="upload-icon">📄</span>
+          <p><strong>Click to upload</strong> or drag and drop your paper here</p>
+          <p>Accepted formats: DOCX, PDF &nbsp;·&nbsp; Max size: 10 MB</p>
+          <p id="file-name"></p>
+        </div>
       </div>
 
       <hr class="card-divider">
@@ -780,38 +767,6 @@
   </div>
 </div>
 
-<!-- ── Submission Progress Overlay ──────────────────────────── -->
-<div id="progress-overlay">
-  <div class="progress-box">
-    <div class="prog-icon">📡</div>
-    <h3>Submitting Your Registration</h3>
-    <div class="prog-stage" id="prog-stage">Preparing your data...</div>
-    <div class="prog-bar-track">
-      <div class="prog-bar-fill" id="prog-bar"></div>
-    </div>
-    <div class="prog-percent" id="prog-percent">0%</div>
-    <div class="prog-steps">
-      <div class="prog-step active" id="pstep-1">
-        <div class="prog-step-dot"></div>Validating
-      </div>
-      <div class="prog-step" id="pstep-2">
-        <div class="prog-step-dot"></div>Uploading
-      </div>
-      <div class="prog-step" id="pstep-3">
-        <div class="prog-step-dot"></div>Saving
-      </div>
-      <div class="prog-step" id="pstep-4">
-        <div class="prog-step-dot"></div>Sending Email
-      </div>
-      <div class="prog-step" id="pstep-5">
-        <div class="prog-step-dot"></div>Done
-      </div>
-    </div>
-    <p class="prog-note">Please do not close or refresh this page.</p>
-  </div>
-</div>
-
-
 <footer>
   <strong>ICSEECR 2026</strong> — International Conference on Sustainable Engineering, Environmental Innovation &amp; Climate Resilience<br>
   Organised by Gateway ICT Polytechnic &nbsp;·&nbsp; <em>Advancing Sustainable Development Goals</em><br>
@@ -826,149 +781,63 @@
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-Q-yIRxxYvnNO5z6j4t0-e1hWHeHXTYggpoM-TmpHZCImKjxHDbArLtLCbpphKlNI/exec';
   // ============================================================
 
-  // ============================================================
-  //  PHASE CHECK — runs on page load
-  //  Calls doGet() on the Apps Script to read cell B2 of the
-  //  Config sheet. Renders the upload section accordingly.
-  //  No page reload or code change needed when phase changes.
-  // ============================================================
-
-  var FULL_PAPER_PHASE = false;  // updated by checkPhase()
-
-  // ── checkPhase uses JSONP-style script tag injection ──────────
-  // A plain fetch() GET to Apps Script fails due to redirect/CORS
-  // on GitHub Pages. Script tag injection bypasses this entirely —
-  // the Apps Script doGet() wraps the response in a callback
-  // function that sets FULL_PAPER_PHASE and calls renderPhase().
-  // A 30-second poll keeps the page in sync if B2 changes while
-  // an author has the page open.
-  // ─────────────────────────────────────────────────────────────
-
-  var _phaseCheckTimer = null;
-
-  function checkPhase() {
-    // Remove any old injected script tag
-    var old = document.getElementById('_phase_script');
-    if (old) old.parentNode.removeChild(old);
-
-    // Inject a new script tag — Apps Script doGet() returns
-    // _phaseCallback({phase:"OPEN"}) or _phaseCallback({phase:"CLOSED"})
-    var s = document.createElement('script');
-    s.id  = '_phase_script';
-    s.src = APPS_SCRIPT_URL + '?callback=_phaseCallback&_t=' + Date.now();
-    s.onerror = function() {
-      console.warn('Phase check script load failed — defaulting to CLOSED');
-      FULL_PAPER_PHASE = false;
-      renderPhase();
-    };
-    document.head.appendChild(s);
-  }
-
-  // Called by the injected script when Apps Script responds
-  function _phaseCallback(data) {
-    FULL_PAPER_PHASE = (data && data.phase === 'OPEN');
-    renderPhase();
-  }
-
-  // Poll every 30 seconds so B2 changes take effect without refresh
-  function startPhasePolling() {
-    checkPhase();
-    _phaseCheckTimer = setInterval(checkPhase, 30000);
-  }
-
-  function renderPhase() {
-    // ── Info block ─────────────────────────────────────────────
-    const infoBlock = document.getElementById('phase-info-block');
-    if (FULL_PAPER_PHASE) {
-      infoBlock.innerHTML =
-        '<strong>📄 Full Paper Submission Now Open</strong><br>' +
-        'Accepted authors may now upload their full papers. Papers must comply with the ' +
-        'official <strong>ICSEECR 2026 paper template</strong> (IEEE Conference format, ' +
-        'PDF only, &lt;20% similarity, double-blind — remove author names from manuscript). ' +
-        'Abstract: 300–500 words. Full paper: 4,000–8,000 words. ' +
-        'Deadline: <strong>14 July 2026</strong>.';
-      infoBlock.style.borderColor = '#2e7d32';
-      infoBlock.style.background  = '#f1f8e9';
-    } else {
-      infoBlock.innerHTML =
-        '<strong>📋 Abstract Submission Phase — Full Paper Upload Not Yet Open</strong><br>' +
-        'At this stage, we are collecting <strong>abstracts only</strong> for peer review. ' +
-        'Full paper uploads will be enabled after conference presentations. When that phase ' +
-        'opens, authors will be notified and must comply with the official ' +
-        '<strong>ICSEECR 2026 paper template</strong> (formatting, length, and citation ' +
-        'guidelines) before uploading. Abstracts: 300–500 words. Papers must be original, ' +
-        'unpublished work not currently under review elsewhere.';
-    }
-
-    // ── Paper status radio options ─────────────────────────────
-    const statusGroup = document.getElementById('paperstatus-group');
-    const statusHint  = document.getElementById('paperstatus-hint');
-    if (FULL_PAPER_PHASE) {
-      statusGroup.innerHTML =
-        '<label><input type="radio" name="paperstatus" value="Not Submitting"> Not submitting a paper</label>' +
-        '<label><input type="radio" name="paperstatus" value="Abstract Only"> Abstract only</label>' +
-        '<label><input type="radio" name="paperstatus" value="Full Paper"> Full paper</label>';
-      statusHint.textContent = 'Select Full Paper if you are uploading your complete manuscript.';
-    } else {
-      statusGroup.innerHTML =
-        '<label><input type="radio" name="paperstatus" value="Not Submitting"> Not submitting a paper</label>' +
-        '<label><input type="radio" name="paperstatus" value="Abstract Only"> Abstract only</label>';
-      statusHint.textContent = 'Full paper submission will be enabled after conference presentations.';
-    }
-
-    // ── Upload section ─────────────────────────────────────────
-    const uploadSection = document.getElementById('upload-section');
-    if (FULL_PAPER_PHASE) {
-      uploadSection.innerHTML =
-        '<div class="field">' +
-          '<label>Upload Full Paper (DOCX or PDF) <span class="req">*</span></label>' +
-          '<div class="upload-area" id="upload-area">' +
-            '<input type="file" id="paperfile" accept=".docx,.pdf" onchange="handleFile(this)">' +
-            '<span class="upload-icon">📄</span>' +
-            '<p><strong>Click to upload</strong> or drag and drop your paper here</p>' +
-            '<p>Accepted formats: DOCX, PDF &nbsp;·&nbsp; Max size: 10 MB</p>' +
-            '<p style="font-size:13px;color:var(--text-muted);margin-top:6px;">' +
-              '⚠️ Your paper MUST comply with the official <strong>ICSEECR 2026 paper template</strong> ' +
-              '(IEEE Conference format, PDF only, &lt;20% similarity, double-blind).' +
-            '</p>' +
-            '<p id="file-name"></p>' +
-          '</div>' +
-        '</div>';
-    } else {
-      uploadSection.innerHTML =
-        '<div class="field">' +
-          '<label>Upload Full Paper</label>' +
-          '<div style="border:2px dashed var(--border);border-radius:10px;padding:1.6rem 1.2rem;' +
-               'text-align:center;background:#fafaf8;opacity:0.75;pointer-events:none;user-select:none;">' +
-            '<span style="font-size:36px;display:block;margin-bottom:10px;filter:grayscale(1)">🔒</span>' +
-            '<p style="font-size:15px;font-weight:500;color:var(--text-muted);margin-bottom:6px">' +
-              'Full Paper Upload — Not Yet Available</p>' +
-            '<p style="font-size:13px;color:var(--text-muted);line-height:1.6;">' +
-              'This section will be enabled after conference presentations.<br>' +
-              'Authors will be notified when full paper submissions open.<br>' +
-              '<strong style="color:var(--green-dark);">Note:</strong> Uploaded papers must strictly ' +
-              'comply with the official <strong>ICSEECR 2026 paper template</strong> ' +
-              '(structure, formatting, citation style, and word count of 4,000–8,000 words).' +
-            '</p>' +
-          '</div>' +
-        '</div>';
-    }
-  }
-
   function handleFile(input) {
     const name = document.getElementById('file-name');
     const area = document.getElementById('upload-area');
     if (input.files[0]) {
-      name.textContent  = '✓  ' + input.files[0].name;
+      name.textContent = '✓  ' + input.files[0].name;
       name.style.display = 'block';
       area.classList.add('has-file');
     }
   }
 
-  // Run phase check immediately and poll every 30 seconds
-  startPhasePolling();
-
   // ============================================================
+  // CO-AUTHOR MANAGEMENT
+  // ============================================================
+  let coAuthorCount = 0;
+
+  function addCoAuthorRow() {
+    coAuthorCount++;
+    const listEl = document.getElementById('coAuthorList');
+    const msgEl  = document.getElementById('no-coauthors-msg');
+    msgEl.style.display = 'none';
+
+    const row = document.createElement('div');
+    row.className = 'coauthor-row';
+    row.innerHTML =
+      '<input type="text" placeholder="Full name" class="coauthor-name">' +
+      '<input type="email" placeholder="Email (optional)" class="coauthor-email">' +
+      '<input type="text" placeholder="Affiliation (optional)" class="coauthor-affiliation">' +
+      '<button type="button" class="remove-coauthor-btn" title="Remove">✕</button>';
+
+    listEl.appendChild(row);
+
+    row.querySelector('.remove-coauthor-btn').addEventListener('click', function() {
+      row.remove();
+      syncCoAuthorsJson();
+      if (!listEl.querySelector('.coauthor-row')) msgEl.style.display = 'block';
+    });
+
+    row.querySelectorAll('input').forEach(function(inp) {
+      inp.addEventListener('input', syncCoAuthorsJson);
+    });
+
+    syncCoAuthorsJson();
+  }
+
+  function syncCoAuthorsJson() {
+    const rows = document.querySelectorAll('#coAuthorList .coauthor-row');
+    const data = [];
+    rows.forEach(function(row) {
+      const name        = row.querySelector('.coauthor-name').value.trim();
+      const email       = row.querySelector('.coauthor-email').value.trim();
+      const affiliation = row.querySelector('.coauthor-affiliation').value.trim();
+      if (name !== '') data.push({ name: name, email: email, affiliation: affiliation });
+    });
+    document.getElementById('coauthorsJson').value = JSON.stringify(data);
+  }
+
+  document.getElementById('addCoAuthorBtn').addEventListener('click', addCoAuthorRow);
 
   async function submitForm() {
     // --- Validation ---
@@ -995,21 +864,8 @@
       alert('Please select your Paper Submission Status.');
       return;
     }
-    const kwVal = document.getElementById('keywords').value.trim();
-    if (!kwVal) {
-      alert('Please enter at least 4 keywords for your paper.');
-      document.getElementById('keywords').focus();
-      return;
-    }
-    const kwCount = kwVal.split(',').map(k => k.trim()).filter(k => k.length > 0).length;
-    if (kwCount < 4) {
-      alert('Please provide at least 4 keywords (separated by commas). You entered ' + kwCount + '.');
-      document.getElementById('keywords').focus();
-      return;
-    }
-    if (kwCount > 6) {
-      alert('Please provide no more than 6 keywords. You entered ' + kwCount + '.');
-      document.getElementById('keywords').focus();
+    if (!document.getElementById('paperfile').files.length) {
+      alert('Please upload your full paper (DOCX or PDF).');
       return;
     }
     if (!document.getElementById('privacy').checked) {
@@ -1017,93 +873,23 @@
       return;
     }
 
-    // --- Full paper phase: validate file upload ---
-    if (FULL_PAPER_PHASE) {
-      const paperStatus = (document.querySelector('input[name="paperstatus"]:checked') || {}).value || '';
-      if (paperStatus === 'Full Paper') {
-        const fileInput = document.getElementById('paperfile');
-        if (!fileInput || !fileInput.files.length) {
-          alert('You selected Full Paper — please upload your paper file (DOCX or PDF).');
-          return;
-        }
-      }
-    }
-
-    // ── Progress bar helpers ───────────────────────────────────
-    const overlay  = document.getElementById('progress-overlay');
-    const bar      = document.getElementById('prog-bar');
-    const pct      = document.getElementById('prog-percent');
-    const stage    = document.getElementById('prog-stage');
-    const steps    = ['pstep-1','pstep-2','pstep-3','pstep-4','pstep-5'];
-    let   progTimer = null;
-
-    function setProgress(percent, stageText, activeStep) {
-      bar.style.width    = percent + '%';
-      pct.textContent    = percent + '%';
-      stage.textContent  = stageText;
-      steps.forEach(function(id, i) {
-        const el = document.getElementById(id);
-        el.classList.remove('done','active');
-        if (i + 1 < activeStep)       el.classList.add('done');
-        else if (i + 1 === activeStep) el.classList.add('active');
-      });
-    }
-
-    function showProgress() {
-      overlay.classList.add('active');
-      setProgress(5, 'Preparing your data...', 1);
-    }
-
-    function hideProgress() {
-      clearInterval(progTimer);
-      overlay.classList.remove('active');
-    }
-
-    function resetBtn() {
-      const b = document.querySelector('.submit-btn');
-      b.disabled    = false;
-      b.textContent = 'Submit Registration →';
-    }
-
-    // ── Disable button and show overlay ───────────────────────
+    // --- Disable button, show loading ---
     const btn = document.querySelector('.submit-btn');
-    btn.disabled    = true;
-    btn.textContent = 'Submitting…';
-    showProgress();
+    btn.disabled = true;
+    btn.textContent = 'Submitting… please wait';
 
     try {
-      // ── Stage 1 — Read file (if applicable) ───────────────
-      setProgress(10, 'Reading your file...', 1);
-      let fileData = null, fileName = null, fileMime = null;
-      if (FULL_PAPER_PHASE) {
-        const fileInput = document.getElementById('paperfile');
-        if (fileInput && fileInput.files.length) {
-          const file = fileInput.files[0];
-          fileName   = file.name;
-          fileMime   = file.type || 'application/octet-stream';
+      // --- Read file as base64 ---
+      const fileInput = document.getElementById('paperfile');
+      const file = fileInput.files[0];
+      const fileData = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
 
-          // Show real FileReader progress
-          fileData = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onprogress = function(ev) {
-              if (ev.lengthComputable) {
-                const filePct = Math.round((ev.loaded / ev.total) * 25);
-                setProgress(10 + filePct, 'Reading file: ' + Math.round((ev.loaded/ev.total)*100) + '%...', 2);
-              }
-            };
-            reader.onload  = () => resolve(reader.result.split(',')[1]);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          });
-          setProgress(35, 'File ready — encoding...', 2);
-          await new Promise(r => setTimeout(r, 300));
-        }
-      }
-
-      // ── Stage 2 — Build payload ────────────────────────────
-      setProgress(40, 'Packaging your submission...', 2);
-      await new Promise(r => setTimeout(r, 250));
-
+      // --- Build payload ---
       const params = new URLSearchParams();
       params.append('fullname',     document.getElementById('fullname').value.trim());
       params.append('email',        document.getElementById('email').value.trim());
@@ -1116,7 +902,8 @@
       params.append('paperstatus',  (document.querySelector('input[name="paperstatus"]:checked') || {}).value || '');
       params.append('track',        document.getElementById('track').value);
       params.append('abstract',     document.getElementById('abstract').value.trim());
-      params.append('keywords',     document.getElementById('keywords').value.trim());
+      syncCoAuthorsJson();
+      params.append('coauthors',    document.getElementById('coauthorsJson').value);
       params.append('awardBest',    document.getElementById('award-best').checked ? 'Yes' : 'No');
       params.append('awardStudent', document.getElementById('award-student').checked ? 'Yes' : 'No');
       params.append('ptype',        (document.querySelector('input[name="ptype"]:checked') || {}).value || '');
@@ -1129,66 +916,34 @@
       params.append('privacy',      document.getElementById('privacy').checked ? 'Yes' : 'No');
       params.append('originality',  document.getElementById('originality').checked ? 'Yes' : 'No');
       params.append('newsletter',   document.getElementById('newsletter').checked ? 'Yes' : 'No');
-      if (fileData) {
-        params.append('fileData', fileData);
-        params.append('fileName', fileName);
-        params.append('fileMime', fileMime);
-      }
+      // File
+      params.append('fileData',     fileData);
+      params.append('fileName',     file.name);
+      params.append('fileMime',     file.type || 'application/octet-stream');
 
-      // ── Stage 3 — Send to Apps Script ─────────────────────
-      setProgress(50, 'Uploading to server...', 3);
-
-      // Animate progress during the network wait (Apps Script can take 10-30s)
-      // Slowly crawl from 50→85 while we wait — jumps to 90 on response
-      let fakeP = 50;
-      progTimer = setInterval(function() {
-        if (fakeP < 85) {
-          fakeP += (fakeP < 65 ? 2 : fakeP < 75 ? 1 : 0.4);
-          const p = Math.round(fakeP);
-          const stageText = p < 60 ? 'Uploading to server...'
-                          : p < 70 ? 'Server is processing...'
-                          : p < 80 ? 'Saving to spreadsheet...'
-                          :          'Almost there...';
-          const stepNum   = p < 65 ? 3 : p < 80 ? 4 : 4;
-          setProgress(p, stageText, stepNum);
-        }
-      }, 600);
-
+      // --- Send to Apps Script ---
       const response = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        body:   params
+        body: params
       });
-
-      clearInterval(progTimer);
-      setProgress(90, 'Processing response...', 4);
-      await new Promise(r => setTimeout(r, 350));
 
       const result = await response.json();
 
-      // ── Stage 4 — Done ─────────────────────────────────────
       if (result.result === 'success') {
-        setProgress(100, 'Submission complete! ✓', 5);
-        document.getElementById('pstep-5').classList.add('done');
-        document.querySelector('.prog-icon').textContent = '✅';
-        stage.textContent = 'Confirmation email sent — redirecting...';
-        await new Promise(r => setTimeout(r, 1200));
-        hideProgress();
         document.getElementById('main-form').style.display = 'none';
-        const sc = document.getElementById('success-screen');
-        sc.style.display        = 'flex';
-        sc.style.flexDirection  = 'column';
-        sc.style.alignItems     = 'center';
+        document.getElementById('success-screen').style.display = 'flex';
+        document.getElementById('success-screen').style.flexDirection = 'column';
+        document.getElementById('success-screen').style.alignItems = 'center';
         window.scrollTo(0, 0);
       } else {
-        hideProgress();
         alert('Submission failed: ' + (result.message || 'Unknown error. Please try again.'));
-        resetBtn();
+        btn.disabled = false;
+        btn.textContent = 'Submit Registration →';
       }
     } catch (err) {
-      clearInterval(progTimer);
-      hideProgress();
       alert('A network error occurred. Please check your connection and try again.');
-      resetBtn();
+      btn.disabled = false;
+      btn.textContent = 'Submit Registration →';
     }
   }
 </script>
